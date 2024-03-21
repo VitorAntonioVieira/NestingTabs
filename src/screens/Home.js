@@ -3,11 +3,19 @@ import { Animated, View, Text, StyleSheet, Image, Pressable, ScrollView } from "
 
 export default function Home({ navigation }) {
     const [progress] = useState(new Animated.Value(0));
+    const [translate] = useState(new Animated.Value(1));
 
     useEffect(() => {
         Animated.loop(
-            Animated.sequence([
-                Animated.spring(progress, { toValue: 1, useNativeDriver: true, duration: 5000 }),
+            Animated.parallel([
+                Animated.sequence([
+                    Animated.spring(progress, { toValue: 1, useNativeDriver: true, duration: 20000 }),
+                    Animated.spring(progress, { toValue: 0.5, useNativeDriver: true, duration: 20000 })
+                ]),
+                Animated.sequence([
+                    Animated.spring(translate, { toValue: 1, useNativeDriver: true, duration: 20000 }),
+                    Animated.spring(translate, { toValue: 0.5, useNativeDriver: true, duration: 20000 })
+                ])
             ])
         ).start();
     }, []);
@@ -28,8 +36,14 @@ export default function Home({ navigation }) {
                     transform: [
                         {
                             rotate: progress.interpolate({
-                                inputRange: [0.5, 1],
-                                outputRange: ['0deg', '350deg']
+                                inputRange: [-1, 0, 0.5, 1],
+                                outputRange: ['348deg', '370deg', '370deg', '348deg']
+                            })
+                        },
+                        {
+                            translateX: translate.interpolate({
+                                inputRange: [-1, 0.5, 1, 2],
+                                outputRange: [-1, -0.5, 0.5, 1]
                             })
                         }
                     ]
@@ -136,7 +150,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         width: 400,
         left: 150,
-        top: -250,
+        top: -260,
     },
     section: {
         flex: 1,
@@ -164,7 +178,9 @@ const styles = StyleSheet.create({
     linkLabel: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#0166b3'
+        color: '#0166b3',
+        fontStyle: 'italic',
+        textDecorationLine: 'underline'
     },
     grid: {
         flex: 1,
